@@ -32,7 +32,63 @@ class ListCommand(BaseCommand):
             return
 
         for index, obj in enumerate(objects):
+            if obj.done is False:
+                ttt = '-'
+            else:
+                ttt = '+'
+            print('{} {}: {}'.format(ttt,index, str(obj)))
+
+
+
+class DoneUndone(BaseCommand):
+    def perform(self, objects, doundo, *args, **kwargs):
+        if len(objects) == 0:
+            print('There are no items in storage.')
+            return
+
+        for index, obj in enumerate(objects):
             print('{}: {}'.format(index, str(obj)))
+
+        print('Select task for mark:')
+        input_function = get_input_function()
+        selection = None
+        selected_key = None
+
+        while True:
+            try:
+                selection = int(input_function('Input number: '))
+                storage_item = objects[selection]
+                storage_item.done = bool(doundo)
+                a = ListCommand()
+                a.perform(objects)
+                break
+            except ValueError:
+                print('Bad input, try again.')
+            except IndexError:
+                print('Wrong index, try again.')
+
+
+class UndoneCommand(DoneUndone):
+    @staticmethod
+    def label():
+        return 'undone'
+
+    def perform(self, objects, *args, **kwargs):
+        super().perform(objects, False)
+
+
+class DoneCommand(DoneUndone):
+    @staticmethod
+    def label():
+        return 'done'
+
+    def perform(self, objects, *args, **kwargs):
+        super().perform(objects, True)
+
+
+
+
+
 
 
 class NewCommand(BaseCommand):
@@ -55,11 +111,12 @@ class NewCommand(BaseCommand):
         # )
         # return dict(classes)
 
-        from models import ToDoItem, ToBuyItem
+        from models import ToDoItem, ToBuyItem, ToReadItem
 
         return {
             'ToDoItem': ToDoItem,
             'ToBuyItem': ToBuyItem,
+            'ToReadItem': ToReadItem,
         }
 
     def perform(self, objects, *args, **kwargs):

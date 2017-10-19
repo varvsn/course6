@@ -14,6 +14,8 @@ from commands import (
     NewCommand,
     ExitCommand,
     UserExitException,
+    DoneCommand,
+    UndoneCommand,
 )
 from models import (
     Storage,
@@ -44,6 +46,8 @@ def get_routes():
         ListCommand.label(): ListCommand,
         NewCommand.label(): NewCommand,
         ExitCommand.label(): ExitCommand,
+        DoneCommand.label(): DoneCommand,
+        UndoneCommand.label(): UndoneCommand,
     }
 
 
@@ -77,14 +81,8 @@ def parse_user_input():
     """
 
     input_function = input
+    message = 'Input your command: (%s): ' % '|'.join(get_routes().keys())
 
-    message = 'Input your command: (%s): ' % '|'.join(
-        {
-            ListCommand.label(): ListCommand,
-            NewCommand.label(): NewCommand,
-            ExitCommand.label(): ExitCommand,
-        }.keys()
-    )
     return input_function(message)
 
 
@@ -104,6 +102,8 @@ def main():
             print('You have done something wrong!', e)
 
 
+print(__name__)
+exit(0)
 if __name__ == '__main__':
     try:
         main()
